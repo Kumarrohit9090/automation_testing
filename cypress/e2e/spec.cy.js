@@ -32,11 +32,12 @@ describe('template spec', () => {
     // cy.get('#cardNumber').click();
     // cy.get("#cardNumber").type('4111111111111111');
     cy.origin('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment?t=d729cdcd1d4e04151b17e9d6a2154dea&lang=en&layout=C0STCBVLEI', () => {
-      // cy.get('#cardNumber').click();
-      cy.get('#cardNumber').type('4111111111111111');
-    });
+      cy.get('#cardNumber').click();
+      cy.get('input[name="cardNumber"]').type('4111111111111111');
       cy.get('input[name="expiry-date"]').type('01/26');
-      cy.get('input[name="#ValidationCode"]').type('123');
-    //   cy.get('.submit-payment-button').click();
+      cy.get('input[name="cvv"]').type('123');
+      cy.get('.submit-payment-button').click();
+      cy.get('.payment-success-title').should('have.text', 'Payment Successful');
+    });
   })
 })
