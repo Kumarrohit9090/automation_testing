@@ -35,8 +35,8 @@ describe('template spec', () => {
       // cy.get('#cardNumber').click();
       cy.get('#cardNumber').type('4111111111111111');
     });
-    //   cy.get('input[name="expiry-date"]').type('01/26');
-    //   cy.get('input[name="#ValidationCode"]').type('123');
+      cy.get('input[name="expiry-date"]').type('01/26');
+      cy.get('input[name="#ValidationCode"]').type('123');
     //   cy.get('.submit-payment-button').click();
   })
 })
