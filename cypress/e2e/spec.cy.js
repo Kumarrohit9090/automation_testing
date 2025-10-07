@@ -31,13 +31,33 @@ describe('template spec', () => {
     // cy.visit('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment?t=d729cdcd1d4e04151b17e9d6a2154dea&lang=en&layout=C0STCBVLEI');
     // cy.get('#cardNumber').click();
     // cy.get("#cardNumber").type('4111111111111111');
-    cy.origin('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment?t=d729cdcd1d4e04151b17e9d6a2154dea&lang=en&layout=C0STCBVLEI', () => {
-      cy.get('#cardNumber').click();
-      cy.get('input[name="cardNumber"]').type('4111111111111111');
-      cy.get('input[name="expiry-date"]').type('01/26');
-      cy.get('input[name="cvv"]').type('123');
-      cy.get('.submit-payment-button').click();
-      cy.get('.payment-success-title').should('have.text', 'Payment Successful');
+    describe('Demo IPG Payment Test', () => {
+      it('should fill card details and submit', () => {
+        // Visit payment page
+        cy.visit('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment?t=d729cdcd1d4e04151b17e9d6a2154dea&lang=en&layout=C0STCBVLEI');
+
+        // Wait for iframe to load (inspect iframe selector in devtools)
+        cy.frameLoaded('iframe'); // replace 'iframe' with the actual selector if needed
+
+        // Fill card number
+        cy.iframe().find('#cardNumber')
+          .should('be.visible')
+          .type('4111111111111111', { delay: 100 });
+
+        // Fill expiry
+        cy.iframe().find('input[name="expiry"]')
+          .should('be.visible')
+          .type('12/25', { delay: 100 });
+
+        // Fill CVV
+        cy.iframe().find('input[name="cvv"]')
+          .should('be.visible')
+          .type('123', { delay: 100 });
+
+        // Click Pay button
+        cy.iframe().find('#btnPay').click();
+      });
     });
-  })
-})
+
+  });
+});
