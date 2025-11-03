@@ -7,16 +7,18 @@ describe('template spec', () => {
     cy.intercept('POST', '/api/web/product/get-product-list').as('getProductList');
     cy.intercept('POST', '/api/web/product/get-product-details_new').as('getProductDetails');
     cy.intercept('Get', '/api/web/product/get-cart-product').as('getCartProduct');
+    cy.intercept('POST', '/api/web/order/add-order').as('placeOrder');
+
     cy.get('#__next > header > div.header_top.font1 > div > div.headtags > a > span.font1-semibold').click();
-    cy.get('#user_email').type('1903041');
-    cy.get('#user_pass').type('1903041');
+    cy.get('#user_email').type('1893119');
+    cy.get('#user_pass').type('1893119');
     cy.get('.signin_btn').click();
     // cy.get('.headtags .headtags-col:nth-child(1) img').click();
 
     cy.wait('@getCategoryList')
     cy.get('#__next > div.jsx-47cdafc8f06dbeeb.container > div > a:nth-child(1) > div > div > img').click();
     cy.wait('@getProductList');
-    cy.get(' div.jsx-c073e60278af30f6.product_section > div:nth-child(1)').click();
+    cy.get(' div.jsx-c073e60278af30f6.product_section > div:nth-child(2)').click();
     cy.wait('@getProductDetails');
     cy.get('div.productlist.font1-semibold > div > table > tbody > tr:nth-child(1)').click();
     cy.get('table tbody tr:nth-child(1) td:nth-child(4) button.plusbtn').dblclick();
@@ -26,38 +28,23 @@ describe('template spec', () => {
     cy.get('#__next > div:nth-child(3) > div.desc_bottom > div:nth-child(2) > div.desc_buttons > button').click();
     // cy.get('.cart_prod table tbody tr td:nth-child(6) button.removeItembtn').click();
     cy.get('.checkoutbtn').click();
-    cy.get('.payment_summery .payment_option .pay_type label').click();
+    
+    cy.wait('@getCartProduct');
+    cy.wait(2000);
+    cy.get('.payment_option button:nth-child(3)').click();
+    cy.get('.payment_summery .payment_option .pay_type:nth-child(3) label').click();
     cy.get('.paymentbtn').click();
-    // cy.visit('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment?t=d729cdcd1d4e04151b17e9d6a2154dea&lang=en&layout=C0STCBVLEI');
-    // cy.get('#cardNumber').click();
-    // cy.get("#cardNumber").type('4111111111111111');
-    describe('Demo IPG Payment Test', () => {
-      it('should fill card details and submit', () => {
-        // Visit payment page
-        cy.visit('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment?t=d729cdcd1d4e04151b17e9d6a2154dea&lang=en&layout=C0STCBVLEI');
+    cy.wait('@placeOrder', { timeout: 300000 }).its('response.statusCode').should('eq', 200);
+    cy.origin('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment', () => {
+  cy.get("#cardNumber").type('4111111111111111');
+  cy.get('input[name="expiry"]').type('01/26');
+  cy.get('input[name="cvv"]').type('123');
 
-        // Wait for iframe to load (inspect iframe selector in devtools)
-        cy.frameLoaded('iframe'); // replace 'iframe' with the actual selector if needed
+  cy.get('#btnPay').click();
+});
 
-        // Fill card number
-        cy.iframe().find('#cardNumber')
-          .should('be.visible')
-          .type('4111111111111111', { delay: 100 });
-
-        // Fill expiry
-        cy.iframe().find('input[name="expiry"]')
-          .should('be.visible')
-          .type('12/25', { delay: 100 });
-
-        // Fill CVV
-        cy.iframe().find('input[name="cvv"]')
-          .should('be.visible')
-          .type('123', { delay: 100 });
-
-        // Click Pay button
-        cy.iframe().find('#btnPay').click();
-      });
-    });
 
   });
 });
+
+
