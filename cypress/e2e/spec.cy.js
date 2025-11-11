@@ -20,6 +20,7 @@ describe('template spec', () => {
     cy.wait('@getProductList');
     cy.get(' div.jsx-c073e60278af30f6.product_section > div:nth-child(2)').click();
     cy.wait('@getProductDetails');
+    cy.wait(3000);
     cy.get('div.productlist.font1-semibold > div > table > tbody > tr:nth-child(1)').click();
     cy.get('table tbody tr:nth-child(1) td:nth-child(4) button.plusbtn').dblclick();
     // cy.get('table tbody tr:nth-child(1) td:nth-child(4) button.minusbtn').dblclick();
@@ -36,9 +37,13 @@ describe('template spec', () => {
     cy.get('.paymentbtn').click();
     cy.wait('@placeOrder', { timeout: 300000 }).its('response.statusCode').should('eq', 200);
     cy.origin('https://demo-ipg.ctdev.comtrust.ae/PaymentEx/MerchantPay/Payment', () => {
-  cy.get("#cardNumber").type('4111111111111111');
-  cy.get('input[name="expiry"]').type('01/26');
-  cy.get('input[name="cvv"]').type('123');
+      cy.wait(5000); 
+  cy.get("#CardNumberText #cardNumber").type('4111111111111111');
+      cy.get('#ExpiryMonthText input.select-dropdown').click({ force: true })
+      cy.get('#ExpiryMonthText .dropdown-content li span').contains('June').click({ force: true })
+      cy.get('#ExpiryYearText input.select-dropdown').click({ force: true })
+      cy.get('#ExpiryYearText .dropdown-content li span').contains('2026').click({ force: true })
+      cy.get('#CVV_Text input[name="ValidationCode"]').type('123');
 
   cy.get('#btnPay').click();
 });
